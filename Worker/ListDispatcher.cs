@@ -3,6 +3,7 @@ using WorkerSpace.Tasks;
 using WorkerSpace.Interfaces;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using Worker.Tasks;
 
 #pragma warning disable CS8618
 #pragma warning disable IDE0028
@@ -22,7 +23,11 @@ namespace WorkerSpace
             // Но для примера создадим задачу прямо тут :D
             IAbstractCounter abstractCounter = new RegisterCounter();
             abstractCounter.Create(4);
-            taskBaseImplements.Add(new PushEventMessage(abstractCounter));
+            taskBaseImplements.Add(new PushEventMessage(abstractCounter, 1));
+
+            IAbstractCounter abstractCounter1 = new RegisterCounter();
+            abstractCounter1.Create(10);
+            taskBaseImplements.Add(new PublishConsoleMessage(abstractCounter1, 3));
         }
 
         public async Task Dispose()
