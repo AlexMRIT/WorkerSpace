@@ -13,21 +13,16 @@ namespace WorkerSpace
 {
     internal sealed class ListDispatcher : ITaskListDispatcher
     {
-        private List<TaskBaseImplement> taskBaseImplements;
+        private static List<TaskBaseImplement> taskBaseImplements = new List<TaskBaseImplement>();
 
-        public void Create()
+        public  static void Create(TaskBaseImplement task)
         {
-            taskBaseImplements = new List<TaskBaseImplement>();
+            //taskBaseImplements = new List<TaskBaseImplement>();
 
+            taskBaseImplements.Add(task);
             // Тут лучше всего реализовать статичный метод, чтобы можно было создать любую таску и впихнуть в очередь
             // Но для примера создадим задачу прямо тут :D
-            IAbstractCounter abstractCounter = new RegisterCounter();
-            abstractCounter.Create(4);
-            taskBaseImplements.Add(new PushEventMessage(abstractCounter, 1));
 
-            IAbstractCounter abstractCounter1 = new RegisterCounter();
-            abstractCounter1.Create(10);
-            taskBaseImplements.Add(new PublishConsoleMessage(abstractCounter1, 3));
         }
 
         public async Task Dispose()

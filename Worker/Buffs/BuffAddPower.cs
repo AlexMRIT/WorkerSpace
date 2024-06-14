@@ -6,28 +6,31 @@ using System.Threading.Tasks;
 using WorkerSpace;
 using WorkerSpace.Interfaces;
 
-namespace Worker.Tasks
+namespace Worker.Buffs
 {
-    internal sealed class PublishConsoleMessage : TaskBaseImplement
+    internal class BuffAddPower : BuffBaseImplement
     {
-        public PublishConsoleMessage(IAbstractCounter abstractCounter)
+        public BuffAddPower(IAbstractCounter abstractCounter)
             : base(abstractCounter)
         {}
+
         public override async Task<HANDLE> StartAsync()
         {
-            Console.WriteLine("StartTask");
+            Console.WriteLine("StartTask - Add Power");
             return await base.StartAsync();
         }
 
         public override async Task<HANDLE> ExecuteAsync()
         {
-            Console.WriteLine("ExecuteTask");
+            Console.WriteLine("ExecuteTask  - Add Power");
+            Owner.Power += 10;
             return await base.ExecuteAsync();
         }
 
         public override async Task<HANDLE> EndAsync()
         {
-            Console.WriteLine("EndTask");
+            Console.WriteLine("EndTask - Add Power");
+            Owner.Power -= 10;
             return await base.EndAsync();
         }
     }

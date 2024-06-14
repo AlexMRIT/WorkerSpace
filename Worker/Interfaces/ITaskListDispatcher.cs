@@ -5,7 +5,7 @@ namespace WorkerSpace.Interfaces
 {
     internal interface ITaskListDispatcher
     {
-        void Create();
+        static abstract void Create(TaskBaseImplement task);
         Task StartTasks();
         Task Dispose();
         IEnumerable<TaskBaseImplement> GetTasks();

@@ -7,18 +7,19 @@ namespace WorkerSpace
     internal class TaskBaseImplement
     {
 #pragma warning disable IDE0290
-        public TaskBaseImplement(IAbstractCounter abstractCounter, int timeOut)
+        public TaskBaseImplement(IAbstractCounter abstractCounter)
         {
             AbstractCounter = abstractCounter;
-            TimeOut = timeOut;
-
         }
 #pragma warning restore IDE0290
 
         public HANDLE StateTask { get; private set; }
         public IAbstractCounter AbstractCounter { get; private set; }
 
-        public int TimeOut { get; private set; }
+        public int TimeOut { get; private set; } = 1;
+
+        public void SetTimeOut(int timeOut) => TimeOut = timeOut;
+
 
         public virtual async Task<HANDLE> StartAsync()
         {

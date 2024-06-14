@@ -7,8 +7,8 @@ namespace WorkerSpace.Tasks
     internal sealed class PushEventMessage : TaskBaseImplement
     {
 #pragma warning disable IDE0290
-        public PushEventMessage(IAbstractCounter abstractCounter, int timeOut)
-            : base(abstractCounter, timeOut)
+        public PushEventMessage(IAbstractCounter abstractCounter)
+            : base(abstractCounter)
         { }
 #pragma warning restore IDE0290
 
