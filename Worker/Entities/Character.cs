@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using WorkerSpace;
 
 namespace Worker.Entities
 {
@@ -19,9 +20,11 @@ namespace Worker.Entities
         public int AdditionalDamage = 10;
         public int DamageReduction = 10;
 
+        public List<TaskBaseImplement> Buffs;
+
         public Character()
         {
-            
+            Buffs = new List<TaskBaseImplement>();
         }
     }
 }

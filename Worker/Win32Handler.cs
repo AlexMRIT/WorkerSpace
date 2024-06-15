@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 
 namespace WorkerSpace {
     public enum Result : byte {
@@ -24,6 +25,11 @@ namespace WorkerSpace {
 
         public readonly Result HandleResult;
         public readonly string HandleMessage;
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public bool TaskEnded() {
+            return HandleResult == Result.E_END;
+        }
     }
 
     internal static class WinAPIAssert {

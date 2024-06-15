@@ -23,14 +23,14 @@ namespace Worker.Buffs
         public override async Task<HANDLE> ExecuteAsync()
         {
             Console.WriteLine("ExecuteTask  - Add Power");
-            Owner.Power += 10;
+            
             return await base.ExecuteAsync();
         }
 
         public override async Task<HANDLE> EndAsync()
         {
             Console.WriteLine("EndTask - Add Power");
-            Owner.Power -= 10;
+            
             return await base.EndAsync();
         }
     }

@@ -6,44 +6,41 @@ using System.Threading.Tasks;
 using Worker.Entities;
 using WorkerSpace;
 using WorkerSpace.Interfaces;
+using WorkerSpace.Tasks;
 
 namespace Worker.Buffs
 {
-    internal class BuffDispatcher
+    internal class BuffDispatcher : ITaskListDispatcher
     {
         public BuffDispatcher() 
-        {
-            for (int i = 0; i < 100; i++)
-                _characterList.Add(new Character());
+        {}
 
-        }
-        private List<Character> _characterList = new List<Character>();
+        private List<TaskBaseImplement> taskBaseImplements = new List<TaskBaseImplement>();
 
-        public async Task<HANDLE> StartAsync() 
+        public void Create()
         {
-            try
-            {
-                Task executor = Task.Factory.StartNew(() =>
-                {     
-                    foreach (var character in _characterList)
-                    {
-                        IAbstractCounter abstractCounter = new RegisterCounter();
-                        abstractCounter.Create(1);
-                        BuffBaseImplement buff = new BuffAddPower(abstractCounter);
-                        buff.SetBuffOwner(character);
-                        ListDispatcher.Create(buff);
-                    }
-                    System.Threading.Thread.Sleep(1);
-                });
-            }
-            catch (Exception exception)
-            {
-                WinAPIAssert.Handle(exception);
-            }
-            
-            return await Task.FromResult(new HANDLE(Result.S_OK));
+            IAbstractCounter abstractCounter = new RegisterCounter();
+            abstractCounter.Create(4);
+            taskBaseImplements.Add(new PushEventMessage(abstractCounter));
+            IAbstractCounter abstractCounter1 = new RegisterCounter();
+            abstractCounter1.Create(10);
+            taskBaseImplements.Add(new PushEventMessage(abstractCounter1));
         }
 
-        
+        public async Task Dispose()
+        {
+            foreach (TaskBaseImplement task in taskBaseImplements)
+                await task.EndAsync();
+        }
+
+        public async Task StartTasks()
+        {
+            foreach (TaskBaseImplement task in taskBaseImplements)
+                await task.StartAsync();
+        }
+        public IEnumerable<TaskBaseImplement> GetTasks()
+        {
+            return taskBaseImplements.Where(task => task.StateTask.HandleResult != Result.E_END);
+        }       
     }
 }
