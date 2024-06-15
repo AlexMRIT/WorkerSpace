@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Worker.Buffs;
 using WorkerSpace.Interfaces;
 
 namespace WorkerSpace
@@ -18,7 +19,11 @@ namespace WorkerSpace
 
         public async Task<HANDLE> StartAsync(CancellationToken cancellationToken)
         {
-            Dispatcher.Create();
+            Console.WriteLine("Start");
+            BuffDispatcher buffDispatcher = new BuffDispatcher();
+            await buffDispatcher.StartAsync();
+            Console.WriteLine("End");
+            //Dispatcher.Create();
             await Dispatcher.StartTasks();
 
             TaskScheduler scheduler = TaskScheduler.Current;
