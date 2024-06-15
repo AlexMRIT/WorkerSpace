@@ -13,12 +13,9 @@ namespace WorkerSpace
         }
 
         public bool IsAliveUpdate() {
-            if (_counter == 0 && !_infinity)
-                return false;
-
             if (!_infinity)
                 _counter--;
-            return true;
+            return !(_counter == 0 && !_infinity);
         }
     }
 }

@@ -14,12 +14,5 @@ namespace Worker.Buffs
         public BuffBaseImplement(IAbstractCounter abstractCounter)
             : base(abstractCounter)
         {}
-
-        public virtual void SetBuffOwner(Character character)
-        {
-            Owner = character;
-        }
-
-        public Character Owner { get; private set; }
     }
 }

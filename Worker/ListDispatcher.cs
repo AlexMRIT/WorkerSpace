@@ -15,11 +15,11 @@ namespace WorkerSpace
     {
         private static List<TaskBaseImplement> taskBaseImplements = new List<TaskBaseImplement>();
 
-        public  static void Create(TaskBaseImplement task)
+        public void Create()
         {
             //taskBaseImplements = new List<TaskBaseImplement>();
 
-            taskBaseImplements.Add(task);
+            //taskBaseImplements.Add();
             // Тут лучше всего реализовать статичный метод, чтобы можно было создать любую таску и впихнуть в очередь
             // Но для примера создадим задачу прямо тут :D
 
