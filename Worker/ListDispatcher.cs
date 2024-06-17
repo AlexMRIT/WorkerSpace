@@ -1,9 +1,11 @@
 ﻿using System;
-using WorkerSpace.Tasks;
 using WorkerSpace.Interfaces;
 using System.Threading.Tasks;
 using System.Collections.Generic;
-using Worker.Tasks;
+using System.Threading;
+using TaskImplaments.Interfaces;
+using TaskImplaments;
+using TaskImplaments.Tasks;
 
 #pragma warning disable CS8618
 #pragma warning disable IDE0028
@@ -11,35 +13,49 @@ using Worker.Tasks;
 
 namespace WorkerSpace
 {
-    internal sealed class ListDispatcher : ITaskListDispatcher
+    internal sealed class ListDispatcher : IDisposable, ITaskListDispatcher
     {
-        private static List<TaskBaseImplement> taskBaseImplements = new List<TaskBaseImplement>();
+        private static List<ThreadWorker> _threadsWorkers = new List<ThreadWorker>();
 
-        public void Create()
-        {
-            //taskBaseImplements = new List<TaskBaseImplement>();
+        //Пока заглушка, для создания воркеров
+        public async void CreateWorker() {
+            ThreadWorker threadWorker = new ThreadWorker();
+            await threadWorker.Start();
+            _threadsWorkers.Add(threadWorker);
 
-            //taskBaseImplements.Add();
-            // Тут лучше всего реализовать статичный метод, чтобы можно было создать любую таску и впихнуть в очередь
-            // Но для примера создадим задачу прямо тут :D
+            IAbstractCounter abstractCounter = new RegisterCounter();
+            abstractCounter.Create(4);
+            TaskBaseImplement task = new PushEventMessage(abstractCounter);
+
+            foreach (var worker in _threadsWorkers){
+               await worker.CurrentWorker.ExecuteTaskAsync(task);
+            }
 
         }
 
-        public async Task Dispose()
-        {
-            foreach (TaskBaseImplement task in taskBaseImplements)
-                await task.EndAsync();
+        public static async Task Create(TaskBaseImplement task){
+            //Сюда прокидываем таску Пока отдаем на работу всем воркерам
+
+            foreach (var worker in  _threadsWorkers)
+            {
+                await worker.CurrentWorker.ExecuteTaskAsync(task);
+            }
         }
 
-        public async Task StartTasks()
+        public void Dispose()
         {
-            foreach (TaskBaseImplement task in taskBaseImplements)
-                await task.StartAsync();
+            foreach (var threadsWorker in _threadsWorkers)
+                threadsWorker.Dispose();
         }
 
-        public IEnumerable<TaskBaseImplement> GetTasks()
+        public List<ThreadWorker> GetThreadsWorkers()
         {
-            return taskBaseImplements.Where(task => task.StateTask.HandleResult != Result.E_END);
+            return _threadsWorkers;
+        }
+
+        public Task StartTasks()
+        {
+            throw new NotImplementedException();
         }
     }
 }
