@@ -5,9 +5,10 @@ namespace WorkerSpace.Interfaces
 {
     internal interface ITaskListDispatcher
     {
-        void Create();
+        //static abstract Task Create();
         Task StartTasks();
-        Task Dispose();
-        IEnumerable<TaskBaseImplement> GetTasks();
+        List<ThreadWorker> GetThreadsWorkers();
+        // Task Dispose();
+        //IEnumerable<TaskBaseImplement> GetTasks();
     }
 }

@@ -1,32 +1,34 @@
 ﻿using System;
-using WorkerSpace.Interfaces;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection.Metadata;
+using System.Text;
 using System.Threading.Tasks;
+using TaskImplaments.Interfaces;
+using Win32Handlers;
 
-namespace WorkerSpace.Tasks
+namespace TaskImplaments.Tasks
 {
-    internal sealed class PushEventMessage : TaskBaseImplement
+    public class PushEventMessage : TaskBaseImplement
     {
-#pragma warning disable IDE0290
         public PushEventMessage(IAbstractCounter abstractCounter)
             : base(abstractCounter)
         { }
-#pragma warning restore IDE0290
-
         public override async Task<HANDLE> StartAsync()
         {
-            Console.WriteLine("Start");
+            Console.WriteLine("StartTask");
             return await base.StartAsync();
         }
 
         public override async Task<HANDLE> ExecuteAsync()
         {
-            Console.WriteLine("Execute");
+            Console.WriteLine("ExecuteTask");
             return await base.ExecuteAsync();
         }
 
         public override async Task<HANDLE> EndAsync()
         {
-            Console.WriteLine("End");
+            Console.WriteLine("EndTask");
             return await base.EndAsync();
         }
     }

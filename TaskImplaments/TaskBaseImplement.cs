@@ -1,10 +1,15 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection.Metadata;
+using System.Text;
 using System.Threading.Tasks;
-using WorkerSpace.Interfaces;
+using TaskImplaments.Interfaces;
+using Win32Handlers;
 
-namespace WorkerSpace
+namespace TaskImplaments
 {
-    internal class TaskBaseImplement
+    public class TaskBaseImplement
     {
 #pragma warning disable IDE0290
         public TaskBaseImplement(IAbstractCounter abstractCounter)
@@ -18,7 +23,10 @@ namespace WorkerSpace
 
         public int TimeOut { get; private set; } = 1;
 
-        public void SetTimeOut(int timeOut) => TimeOut = timeOut;
+        public void SetTimeOut(int timeOut)
+        {
+            TimeOut = timeOut;
+        }
 
 
         public virtual async Task<HANDLE> StartAsync()
