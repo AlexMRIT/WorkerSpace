@@ -68,11 +68,11 @@ namespace commonlib.Thread
 
                         foreach (IStorageId id in tasksToRemove)
                         {
-                            tasksToRemove.Remove(id);
                             await Tasks[id].StopAsync();
                             Tasks.TryRemove(id, out _);
                             countRegisteredTasks = Math.Max(0, countRegisteredTasks--);
                         }
+                        tasksToRemove.Clear();
                     }
                 }, CurrentCancelationToken.Token, TaskCreationOptions.LongRunning, ThreadSheduler);
             }
