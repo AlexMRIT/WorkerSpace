@@ -1,4 +1,5 @@
-﻿using commonlib.WinUtils;
+﻿using commonlib.Models;
+using commonlib.WinUtils;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -13,5 +14,6 @@ namespace commonlib.Interfaces
         Task<HANDLE> StartAsync();
         Task<HANDLE> ExecuteAsync();
         Task<HANDLE> StopAsync();
+        TaskBuilder GetTaskBuilder();
     }
 }

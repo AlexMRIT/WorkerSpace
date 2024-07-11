@@ -3,6 +3,7 @@ using commonlib.Interfaces;
 using commonlib.Models;
 using System;
 using System.Diagnostics;
+using System.Reflection;
 using System.Threading.Tasks;
 
 namespace Server
@@ -15,6 +16,8 @@ namespace Server
 
             TaskBuilder taskBuilder = new TaskBuilder();
             taskBuilder.AppendStartDelegateFunc(() => { Console.WriteLine("Эта функция выполнилась при старте"); });
+            taskBuilder.AppendExecuteDelegateFunc(() => { Console.WriteLine("А эта функция выполняется раз в 5sec"); }, sleep: 5f);
+            taskBuilder.AppendExecuteDelegateFunc(() => { Console.WriteLine("А эта функция выполняется раз в 3sec"); }, sleep: 3f);
             taskBuilder.AppendExecuteDelegateFunc(() => { Console.WriteLine("А эта функция выполняется раз в секунду"); });
             taskBuilder.AppendEndFuncs(() => { Console.WriteLine("Тут уже таска прекратила свою жизнь :D"); });
 
@@ -23,7 +26,8 @@ namespace Server
                 await Task.Delay(TimeSpan.FromSeconds(5));
             });
 
-            ITask task = CLIBTask.NewTask(taskBuilder); 
+            ITask task = CLIBTask.NewTask(taskBuilder);
+
 
             Process.GetCurrentProcess().WaitForExit();
         }

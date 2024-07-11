@@ -5,6 +5,7 @@ using commonlib.WinUtils;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 
 namespace commonlib.Templates
 {
@@ -25,6 +26,8 @@ namespace commonlib.Templates
         public bool TaskHasDelete { set => _destroy = value; }
 
         public bool TaskIsRunning => _isRunning;
+
+        public TaskBuilder GetTaskBuilder() => taskBuilder;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public async Task<HANDLE> StartAsync()
@@ -52,8 +55,13 @@ namespace commonlib.Templates
         public async Task<HANDLE> ExecuteAsync()
         {
             if (!_cancellationToken.IsCancellationRequested || _destroy)
-                foreach (Action func in taskBuilder.GetExecuteFuncs())
-                    func();
+                foreach (KeyValuePair<TaskExecutionMethod, Action> func in taskBuilder.GetExecuteFuncs())
+                {
+                    func.Value();
+                    await Task.Delay(TimeSpan.FromSeconds(func.Key.delay));
+                }
+
+                    
 
             return await Task.FromResult(new HANDLE(Result.S_OK));
         }
