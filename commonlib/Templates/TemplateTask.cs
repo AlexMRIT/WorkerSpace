@@ -27,8 +27,6 @@ namespace commonlib.Templates
 
         public bool TaskIsRunning => _isRunning;
 
-        public TaskBuilder GetTaskBuilder() => taskBuilder;
-
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public async Task<HANDLE> StartAsync()
         {
@@ -55,14 +53,13 @@ namespace commonlib.Templates
         public async Task<HANDLE> ExecuteAsync()
         {
             if (!_cancellationToken.IsCancellationRequested || _destroy)
+            {
                 foreach (KeyValuePair<TaskExecutionMethod, Action> func in taskBuilder.GetExecuteFuncs())
                 {
                     func.Value();
-                    await Task.Delay(TimeSpan.FromSeconds(func.Key.delay));
+                    await Task.Delay(TimeSpan.FromSeconds(func.Key.Delay));
                 }
-
-                    
-
+            }
             return await Task.FromResult(new HANDLE(Result.S_OK));
         }
 

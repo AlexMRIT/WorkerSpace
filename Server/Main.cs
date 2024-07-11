@@ -3,14 +3,13 @@ using commonlib.Interfaces;
 using commonlib.Models;
 using System;
 using System.Diagnostics;
-using System.Reflection;
 using System.Threading.Tasks;
 
 namespace Server
 {
     internal class Application
     {
-        private static void Main(string[] args)
+        private static void Main()
         {
             CLIBTask.CreateWorker("Main Worker");
 
@@ -27,8 +26,6 @@ namespace Server
             });
 
             ITask task = CLIBTask.NewTask(taskBuilder);
-
-
             Process.GetCurrentProcess().WaitForExit();
         }
     }

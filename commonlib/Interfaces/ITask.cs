@@ -14,6 +14,5 @@ namespace commonlib.Interfaces
         Task<HANDLE> StartAsync();
         Task<HANDLE> ExecuteAsync();
         Task<HANDLE> StopAsync();
-        TaskBuilder GetTaskBuilder();
     }
 }

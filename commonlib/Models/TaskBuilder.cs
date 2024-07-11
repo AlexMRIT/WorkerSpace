@@ -1,6 +1,4 @@
-﻿using commonlib.Interfaces;
-using commonlib.Templates;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -8,18 +6,17 @@ namespace commonlib.Models
 {
     public class TaskBuilder
     {
-
         public TaskBuilder()
         {
             StartFuncs = new List<Action>();
             ExecuteFuncs = new List<KeyValuePair<TaskExecutionMethod, Action>>();
             EndFuncs = new List<Action>();
-
         }
 
         private readonly List<Action> StartFuncs;
         private readonly List<KeyValuePair<TaskExecutionMethod, Action>> ExecuteFuncs;
         private readonly List<Action> EndFuncs;
+
         private Func<Task> TerminationCondition;
 
         public TaskBuilder AppendStartDelegateFunc(Action func)
@@ -28,9 +25,11 @@ namespace commonlib.Models
             return this;
         }
 
-        public TaskBuilder AppendExecuteDelegateFunc(Action func, float sleep = 1)
+        public TaskBuilder AppendExecuteDelegateFunc(Action func, float sleep = 1.0f)
         {
-            ExecuteFuncs.Add(new KeyValuePair<TaskExecutionMethod,Action>(new TaskExecutionMethod(sleep), func));
+            TaskExecutionMethod funcExecutionMethod = new TaskExecutionMethod(sleep);
+
+            ExecuteFuncs.Add(new KeyValuePair<TaskExecutionMethod,Action>(funcExecutionMethod, func));
             return this;
         }
 
