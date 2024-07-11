@@ -62,8 +62,6 @@ namespace commonlib.Thread
                                 task.Value.TaskHasDelete = true;
                                 tasksToRemove.Add(task.Key);
                             }
-
-                            await Task.Delay(TimeSpan.FromSeconds(1), CurrentCancelationToken.Token);
                         }
 
                         foreach (IStorageId id in tasksToRemove)
@@ -73,6 +71,7 @@ namespace commonlib.Thread
                             countRegisteredTasks = Math.Max(0, countRegisteredTasks--);
                         }
                         tasksToRemove.Clear();
+                        await Task.Delay(TimeSpan.FromSeconds(1), CurrentCancelationToken.Token);
                     }
                 }, CurrentCancelationToken.Token, TaskCreationOptions.LongRunning, ThreadSheduler);
             }

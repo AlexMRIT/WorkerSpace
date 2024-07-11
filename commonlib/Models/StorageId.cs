@@ -13,7 +13,7 @@ namespace commonlib.Models
 
         public int GenerateId()
         {
-            guid = new Guid();
+            guid = Guid.NewGuid();
             return guid.GetHashCode();
         }
 
