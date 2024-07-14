@@ -29,7 +29,7 @@ namespace commonlib.Models
         {
             TaskExecutionMethod funcExecutionMethod = new TaskExecutionMethod(sleep);
 
-            ExecuteFuncs.Add(new KeyValuePair<TaskExecutionMethod,Action>(funcExecutionMethod, func));
+            ExecuteFuncs.Add(new KeyValuePair<TaskExecutionMethod, Action>(funcExecutionMethod, func));
             return this;
         }
 

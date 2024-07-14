@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using commonlib.Interfaces;
 using System.Collections.Generic;
 using System.Collections.Concurrent;
+using commonlib.Enums;
 
 namespace commonlib.Thread
 {
@@ -34,6 +35,9 @@ namespace commonlib.Thread
         }
 
         public int CountRegistered => countRegisteredTasks;
+#if DEBUG
+        private int tick = 0;
+#endif
 
         public async Task<HANDLE> ExecuteTaskAsync()
         {
@@ -46,22 +50,31 @@ namespace commonlib.Thread
                     {
                         foreach (KeyValuePair<IStorageId, ITask> task in Tasks)
                         {
-                            if (!task.Value.TaskIsRunning)
+#if DEBUG
+                            Console.ForegroundColor = ConsoleColor.Green;
+                            Console.WriteLine($"Тик воркера [{++tick}]");
+                            Console.ForegroundColor = ConsoleColor.Gray;
+#endif
+
+                            if (task.Value.GetBits.IsBitSet(CustomTaskStatus.TS_BUSY))
                                 continue;
 
-                            HANDLE result = await task.Value.ExecuteAsync();
-                            if (WinAPIAssert.Fail(result, out string message))
+                            _ = Task.Run(async () =>
                             {
-                                await task.Value.StopAsync();
-                                CurrentCancelationToken.Token.ThrowIfCancellationRequested();
-                                Console.WriteLine(message);
-                            }
+                                HANDLE result = await task.Value.ExecuteAsync();
+                                if (WinAPIAssert.Fail(result, out string message))
+                                {
+                                    await task.Value.StopAsync();
+                                    CurrentCancelationToken.Token.ThrowIfCancellationRequested();
+                                    Console.WriteLine(message);
+                                }
 
-                            if (task.Value.IsTaskCanceled())
-                            {
-                                task.Value.TaskHasDelete = true;
-                                tasksToRemove.Add(task.Key);
-                            }
+                                if (task.Value.IsTaskCanceled())
+                                {
+                                    task.Value.GetBits.SetBit(CustomTaskStatus.TS_HASDELETE);
+                                    tasksToRemove.Add(task.Key);
+                                }
+                            });
                         }
 
                         foreach (IStorageId id in tasksToRemove)

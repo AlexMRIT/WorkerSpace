@@ -45,6 +45,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CLIBTask.cs" />
+    <Compile Include="Enums\ErrorCode.cs" />
+    <Compile Include="Enums\TaskEnum.cs" />
     <Compile Include="Interfaces\IStorageId.cs" />
     <Compile Include="Interfaces\ITask.cs" />
     <Compile Include="Models\StorageId.cs" />
@@ -54,7 +56,7 @@
     <Compile Include="Templates\TemplateTask.cs" />
     <Compile Include="Thread\ThreadWorker.cs" />
     <Compile Include="Thread\Worker.cs" />
-    <Compile Include="WinUtils\Condition.cs" />
+    <Compile Include="Models\TaskBits.cs" />
     <Compile Include="WinUtils\Win32Handler.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
