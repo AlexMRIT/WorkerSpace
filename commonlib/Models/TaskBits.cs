@@ -15,20 +15,20 @@ namespace commonlib.Models
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool IsBitSet(CustomTaskStatus state) 
         {
-            return (_state & (1 << (int)state)) != 0;
+            return (_state & (int)state) != 0;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public TaskBits SetBit(CustomTaskStatus state)
         {
-            _state |= 1 << (int)state;
+            _state |= (int)state;
             return this;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public TaskBits ClearBit(CustomTaskStatus state)
         {
-            _state &= ~(1 << (int)state);
+            _state &= ~(int)state;
             return this;
         }
     }
