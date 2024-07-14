@@ -58,7 +58,7 @@ namespace commonlib.Templates
                     _bits.SetBit(CustomTaskStatus.TS_BUSY);
                     func.Value();
                     await Task.Delay(TimeSpan.FromSeconds(func.Key.Delay));
-                    _bits.ClearBit(CustomTaskStatus.TS_BUSY);
+                    //_bits.ClearBit(CustomTaskStatus.TS_BUSY);
                 }
             }
 
