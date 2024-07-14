@@ -54,6 +54,7 @@
     <Compile Include="Templates\TemplateTask.cs" />
     <Compile Include="Thread\ThreadWorker.cs" />
     <Compile Include="Thread\Worker.cs" />
+    <Compile Include="WinUtils\Condition.cs" />
     <Compile Include="WinUtils\Win32Handler.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
