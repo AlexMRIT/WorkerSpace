@@ -51,6 +51,10 @@
       <Project>{cbd7b11c-67ab-43b1-a9cf-9ae5df4f1da3}</Project>
       <Name>commonlib</Name>
     </ProjectReference>
+    <ProjectReference Include="..\plib\plib.csproj">
+      <Project>{b0421897-e71d-4781-892d-6c755c247495}</Project>
+      <Name>plib</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

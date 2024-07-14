@@ -36,7 +36,8 @@ namespace commonlib.Templates
                 _ = Task.Run(async () =>
                 {
                     Func<Task> func = taskBuilder.GetTerminationCondition();
-                    await func();
+                    if (func != null)
+                        await func();
                     _cancellationToken.Cancel();
                 });
 
@@ -58,7 +59,7 @@ namespace commonlib.Templates
                     _bits.SetBit(CustomTaskStatus.TS_BUSY);
                     func.Value();
                     await Task.Delay(TimeSpan.FromSeconds(func.Key.Delay));
-                    //_bits.ClearBit(CustomTaskStatus.TS_BUSY);
+                    _bits.ClearBit(CustomTaskStatus.TS_BUSY);
                 }
             }
 

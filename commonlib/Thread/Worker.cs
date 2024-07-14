@@ -35,9 +35,6 @@ namespace commonlib.Thread
         }
 
         public int CountRegistered => countRegisteredTasks;
-#if DEBUG
-        private int tick = 0;
-#endif
 
         public async Task<HANDLE> ExecuteTaskAsync()
         {
@@ -50,13 +47,16 @@ namespace commonlib.Thread
                     {
                         foreach (KeyValuePair<IStorageId, ITask> task in Tasks)
                         {
-#if DEBUG
-                            Console.ForegroundColor = ConsoleColor.Green;
-                            Console.WriteLine($"Тик воркера [{++tick}]");
-                            Console.ForegroundColor = ConsoleColor.Gray;
-#endif
+                            if (task.Value.IsTaskCanceled())
+                            {
+                                task.Value.GetBits.SetBit(CustomTaskStatus.TS_HASDELETE);
+                                tasksToRemove.Add(task.Key);
+                            }
 
                             if (task.Value.GetBits.IsBitSet(CustomTaskStatus.TS_BUSY))
+                                continue;
+
+                            if (task.Value.GetBits.IsBitSet(CustomTaskStatus.TS_HASDELETE))
                                 continue;
 
                             _ = Task.Run(async () =>
@@ -68,12 +68,6 @@ namespace commonlib.Thread
                                     CurrentCancelationToken.Token.ThrowIfCancellationRequested();
                                     Console.WriteLine(message);
                                 }
-
-                                if (task.Value.IsTaskCanceled())
-                                {
-                                    task.Value.GetBits.SetBit(CustomTaskStatus.TS_HASDELETE);
-                                    tasksToRemove.Add(task.Key);
-                                }
                             });
                         }
 
@@ -81,10 +75,13 @@ namespace commonlib.Thread
                         {
                             await Tasks[id].StopAsync();
                             Tasks.TryRemove(id, out _);
-                            countRegisteredTasks = Math.Max(0, countRegisteredTasks--);
+                            countRegisteredTasks = Math.Max(0, --countRegisteredTasks);
                         }
-                        tasksToRemove.Clear();
-                        await Task.Delay(TimeSpan.FromSeconds(1), CurrentCancelationToken.Token);
+
+                        if (tasksToRemove.Count > 0)
+                            tasksToRemove.Clear();
+
+                        await Task.Delay(TimeSpan.FromMilliseconds(100), CurrentCancelationToken.Token);
                     }
                 }, CurrentCancelationToken.Token, TaskCreationOptions.LongRunning, ThreadSheduler);
             }

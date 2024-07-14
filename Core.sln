@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "commonlib", "commonlib\comm
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Server", "Server\Server.csproj", "{740BECF5-6451-4599-A2BC-75F560B247CD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "plib", "plib\plib.csproj", "{B0421897-E71D-4781-892D-6C755C247495}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{740BECF5-6451-4599-A2BC-75F560B247CD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{740BECF5-6451-4599-A2BC-75F560B247CD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{740BECF5-6451-4599-A2BC-75F560B247CD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B0421897-E71D-4781-892D-6C755C247495}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B0421897-E71D-4781-892D-6C755C247495}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B0421897-E71D-4781-892D-6C755C247495}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B0421897-E71D-4781-892D-6C755C247495}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
