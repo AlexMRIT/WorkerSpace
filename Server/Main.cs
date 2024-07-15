@@ -52,10 +52,7 @@ namespace Server
             taskBuilder.AppendExecuteDelegateFunc(example.Execute1);
             taskBuilder.AppendEndFuncs(example.End);
             
-            taskBuilder.AppendTerminationCondition(async () =>
-            {
-                await Task.Delay(TimeSpan.FromSeconds(5));
-            });
+           
             
             ITask task = CLIBTask.NewTask(taskBuilder);
            
