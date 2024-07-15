@@ -40,7 +40,6 @@ namespace commonlib.Thread
         {
             try
             {
-                int step = 1;
                 Task executor = Task.Factory.StartNew(async () =>
                 {
                     List<IStorageId> tasksToRemove = new List<IStorageId>(capacity: 256);
@@ -48,11 +47,6 @@ namespace commonlib.Thread
                     {
                         foreach (KeyValuePair<IStorageId, ITask> task in Tasks)
                         {
-                            Console.ForegroundColor = ConsoleColor.Green;
-                            Console.Write($"Проход Воркера [{step}]\n");
-                            Console.ResetColor();
-                            step++;
-
                             if (task.Value.GetBits.IsBitSet(CustomTaskStatus.TS_BUSY))
                                 continue;
 
@@ -89,7 +83,7 @@ namespace commonlib.Thread
                         if (tasksToRemove.Count > 0)
                             tasksToRemove.Clear();
 
-                        await Task.Delay(TimeSpan.FromSeconds(1), CurrentCancelationToken.Token);
+                        await Task.Delay(TimeSpan.FromMilliseconds(1), CurrentCancelationToken.Token);
                     }
                 }, CurrentCancelationToken.Token, TaskCreationOptions.LongRunning, ThreadSheduler);
             }
