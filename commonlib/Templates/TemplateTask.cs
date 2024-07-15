@@ -7,7 +7,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using commonlib.Enums;
 using System.Linq;
-using System.Collections.Generic;
 
 namespace commonlib.Templates
 {
@@ -51,14 +50,7 @@ namespace commonlib.Templates
             if (!_cancellationToken.IsCancellationRequested || _bits.IsBitSet(CustomTaskStatus.TS_HASDELETE))
             {
                 _bits.SetBit(CustomTaskStatus.TS_BUSY);
-                await Task.WhenAll(taskBuilder.GetExecuteFuncs().Select(async action =>
-                {
-                    if (action.Value.IsBitSet(CustomTaskStatus.TS_BUSY))
-                        return;
-                    action.Value.SetBit(CustomTaskStatus.TS_BUSY);
-                        await Task.Run(action.Key);
-                    action.Value.ClearBit(CustomTaskStatus.TS_BUSY);
-                }).ToArray());
+                await Task.WhenAll(taskBuilder.GetExecuteFuncs().Select(async action => await Task.Run(action)).ToArray());
             _bits.ClearBit(CustomTaskStatus.TS_BUSY);
             }
 

@@ -12,29 +12,24 @@ namespace Server
 {
     public class ExampleImplTask
     {
+        public int Time = 10;
+
         public Task Start()
         {
-            Console.WriteLine("Эта функция выполнилась при старте");
+            Console.WriteLine("Мы навесили баф: увеличить силу +15");
             return Task.CompletedTask;
         }
 
         public async Task Execute()
         {
-            Console.WriteLine("А эта функция выполняется раз в 3sec");
-            await Task.Delay(TimeSpan.FromSeconds(3));
-            Console.WriteLine("Функция с 3 секундами закончила свое выполнение");
-        }
-
-        public async Task Execute1()
-        {
-            Console.WriteLine("А эта функция выполняется раз в 5sec");
-            await Task.Delay(TimeSpan.FromSeconds(5));
-            Console.WriteLine("Функция с 5 секундами закончила свое выполнение");
+            Console.WriteLine($"Бафу осталось времени: {Time}");
+            await Task.Delay(1000);
+            Time--;
         }
 
         public Task End()
         {
-            Console.WriteLine("Тут уже таска прекратила свою жизнь :D");
+            Console.WriteLine("Мы сняли баф: увелчить силу +15");
             return Task.CompletedTask;
         }
     }
@@ -49,10 +44,13 @@ namespace Server
             TaskBuilder taskBuilder = new TaskBuilder();
             taskBuilder.AppendStartDelegateFunc(example.Start);
             taskBuilder.AppendExecuteDelegateFunc(example.Execute);
-            taskBuilder.AppendExecuteDelegateFunc(example.Execute1);
             taskBuilder.AppendEndFuncs(example.End);
-            
-           
+
+            taskBuilder.AppendTerminationCondition(async () =>
+            {
+                int time = example.Time;
+                await Task.Delay(TimeSpan.FromSeconds(time));
+            });
             
             ITask task = CLIBTask.NewTask(taskBuilder);
            
