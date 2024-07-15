@@ -23,6 +23,8 @@ namespace commonlib.Templates
 
         protected internal readonly TaskBits _bits;
 
+        protected internal readonly KeyValuePair<TaskBits, Action> _taskBits;
+
         public CancellationTokenSource CancellationToken => _cancellationToken;
         public TaskBits GetBits => _bits;
 
@@ -54,13 +56,22 @@ namespace commonlib.Templates
         {
             if (!_cancellationToken.IsCancellationRequested || _bits.IsBitSet(CustomTaskStatus.TS_HASDELETE))
             {
+                _bits.SetBit(CustomTaskStatus.TS_BUSY);
                 foreach (KeyValuePair<TaskExecutionMethod, Action> func in taskBuilder.GetExecuteFuncs())
                 {
-                    _bits.SetBit(CustomTaskStatus.TS_BUSY);
-                    func.Value();
-                    await Task.Delay(TimeSpan.FromSeconds(func.Key.Delay));
-                    _bits.ClearBit(CustomTaskStatus.TS_BUSY);
+
+                    if (func.Key.Bits.IsBitSet(CustomTaskStatus.TS_BUSY))
+                        continue;
+
+                    _ = Task.Run(async () =>
+                    {
+                        func.Key.Bits.SetBit(CustomTaskStatus.TS_BUSY);
+                        func.Value();
+                        await Task.Delay(TimeSpan.FromSeconds(func.Key.Delay));
+                    });
+                    func.Key.Bits.ClearBit(CustomTaskStatus.TS_BUSY);
                 }
+                _bits.ClearBit(CustomTaskStatus.TS_BUSY);
             }
 
             return await Task.FromResult(new HANDLE(Result.S_OK));

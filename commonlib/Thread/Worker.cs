@@ -40,6 +40,7 @@ namespace commonlib.Thread
         {
             try
             {
+                int step = 1;
                 Task executor = Task.Factory.StartNew(async () =>
                 {
                     List<IStorageId> tasksToRemove = new List<IStorageId>(capacity: 256);
@@ -47,11 +48,10 @@ namespace commonlib.Thread
                     {
                         foreach (KeyValuePair<IStorageId, ITask> task in Tasks)
                         {
-                            if (task.Value.IsTaskCanceled())
-                            {
-                                task.Value.GetBits.SetBit(CustomTaskStatus.TS_HASDELETE);
-                                tasksToRemove.Add(task.Key);
-                            }
+                            Console.ForegroundColor = ConsoleColor.Green;
+                            Console.Write($"Проход Воркера [{step}]\n");
+                            Console.ResetColor();
+                            step++;
 
                             if (task.Value.GetBits.IsBitSet(CustomTaskStatus.TS_BUSY))
                                 continue;
@@ -69,19 +69,25 @@ namespace commonlib.Thread
                                     Console.WriteLine(message);
                                 }
                             });
+
+                            if (task.Value.IsTaskCanceled())
+                            {
+                                task.Value.GetBits.SetBit(CustomTaskStatus.TS_HASDELETE);
+                                tasksToRemove.Add(task.Key);
+                            }
                         }
 
                         foreach (IStorageId id in tasksToRemove)
                         {
                             await Tasks[id].StopAsync();
                             Tasks.TryRemove(id, out _);
-                            countRegisteredTasks = Math.Max(0, --countRegisteredTasks);
+                            countRegisteredTasks = Math.Max(0, countRegisteredTasks--);
                         }
 
                         if (tasksToRemove.Count > 0)
                             tasksToRemove.Clear();
 
-                        await Task.Delay(TimeSpan.FromMilliseconds(100), CurrentCancelationToken.Token);
+                        await Task.Delay(TimeSpan.FromSeconds(1), CurrentCancelationToken.Token);
                     }
                 }, CurrentCancelationToken.Token, TaskCreationOptions.LongRunning, ThreadSheduler);
             }
