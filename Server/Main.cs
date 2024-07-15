@@ -10,29 +10,32 @@ using System.Threading.Tasks;
 
 namespace Server
 {
-    public class ExampleInplTask
+    public class ExampleImplTask
     {
-       // [Profiled(nameof(Start), ProfiledOperationImplement.POI_SYNC)]
-        public void Start()
+        public Task Start()
         {
             Console.WriteLine("Эта функция выполнилась при старте");
+            return Task.CompletedTask;
         }
 
-        //[Profiled(nameof(Execute), ProfiledOperationImplement.POI_SYNC)]
-        public void Execute()
+        public async Task Execute()
         {
             Console.WriteLine("А эта функция выполняется раз в 3sec");
-        }
-        //[Profiled(nameof(Execute1), ProfiledOperationImplement.POI_SYNC)]
-        public void Execute1()
-        {
-            Console.WriteLine("А эта функция выполняется раз в 5sec");
+            await Task.Delay(TimeSpan.FromSeconds(3));
+            Console.WriteLine("Функция с 3 секундами закончила свое выполнение");
         }
 
-       // [Profiled(nameof(End), ProfiledOperationImplement.POI_SYNC)]
-        public void End()
+        public async Task Execute1()
+        {
+            Console.WriteLine("А эта функция выполняется раз в 5sec");
+            await Task.Delay(TimeSpan.FromSeconds(5));
+            Console.WriteLine("Функция с 5 секундами закончила свое выполнение");
+        }
+
+        public Task End()
         {
             Console.WriteLine("Тут уже таска прекратила свою жизнь :D");
+            return Task.CompletedTask;
         }
     }
 
@@ -42,11 +45,11 @@ namespace Server
         {
             CLIBTask.CreateWorker("Main Worker");
 
-            ExampleInplTask example = new ExampleInplTask();
+            ExampleImplTask example = new ExampleImplTask();
             TaskBuilder taskBuilder = new TaskBuilder();
             taskBuilder.AppendStartDelegateFunc(example.Start);
-            taskBuilder.AppendExecuteDelegateFunc(example.Execute, sleep: 3f);
-            taskBuilder.AppendExecuteDelegateFunc(example.Execute1, sleep: 5f);
+            taskBuilder.AppendExecuteDelegateFunc(example.Execute);
+            taskBuilder.AppendExecuteDelegateFunc(example.Execute1);
             taskBuilder.AppendEndFuncs(example.End);
             
             taskBuilder.AppendTerminationCondition(async () =>
@@ -55,7 +58,6 @@ namespace Server
             });
             
             ITask task = CLIBTask.NewTask(taskBuilder);
-            //ProfiledRecursive.Run(example);
            
             Process.GetCurrentProcess().WaitForExit();
         }

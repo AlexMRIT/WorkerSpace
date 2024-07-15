@@ -8,32 +8,30 @@ namespace commonlib.Models
     {
         public TaskBuilder()
         {
-            StartFuncs = new List<Action>();
-            ExecuteFuncs = new List<KeyValuePair<TaskExecutionMethod, Action>>();
-            EndFuncs = new List<Action>();
+            StartFuncs = new List<Func<Task>>();
+            ExecuteFuncs = new List<Func<Task>>();
+            EndFuncs = new List<Func<Task>>();
         }
 
-        private readonly List<Action> StartFuncs;
-        private readonly List<KeyValuePair<TaskExecutionMethod, Action>> ExecuteFuncs;
-        private readonly List<Action> EndFuncs;
+        private readonly List<Func<Task>> StartFuncs;
+        private readonly List<Func<Task>> ExecuteFuncs;
+        private readonly List<Func<Task>> EndFuncs;
 
         private Func<Task> TerminationCondition;
 
-        public TaskBuilder AppendStartDelegateFunc(Action func)
+        public TaskBuilder AppendStartDelegateFunc(Func<Task> func)
         {
             StartFuncs.Add(func);
             return this;
         }
 
-        public TaskBuilder AppendExecuteDelegateFunc(Action func, float sleep = 1.0f)
+        public TaskBuilder AppendExecuteDelegateFunc(Func<Task> func)
         {
-            TaskExecutionMethod funcExecutionMethod = new TaskExecutionMethod(sleep);
-
-            ExecuteFuncs.Add(new KeyValuePair<TaskExecutionMethod, Action>(funcExecutionMethod, func));
+            ExecuteFuncs.Add(func);
             return this;
         }
 
-        public TaskBuilder AppendEndFuncs(Action func)
+        public TaskBuilder AppendEndFuncs(Func<Task> func)
         {
             EndFuncs.Add(func);
             return this;
@@ -44,10 +42,9 @@ namespace commonlib.Models
             TerminationCondition = func;
         }
 
-        protected internal IReadOnlyCollection<Action> GetStartFuncs() => StartFuncs;
-        protected internal IReadOnlyCollection<KeyValuePair<TaskExecutionMethod, Action>> GetExecuteFuncs() => ExecuteFuncs;
-        protected internal IReadOnlyCollection<Action> GetEndFuncs() => EndFuncs;
+        protected internal IEnumerable<Func<Task>> GetStartFuncs() => StartFuncs;
+        protected internal IReadOnlyList<Func<Task>> GetExecuteFuncs() => ExecuteFuncs;
+        protected internal IEnumerable<Func<Task>> GetEndFuncs() => EndFuncs;
         protected internal Func<Task> GetTerminationCondition() => TerminationCondition;
-
     }
 }

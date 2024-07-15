@@ -5,8 +5,8 @@ using commonlib.WinUtils;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Collections.Generic;
 using commonlib.Enums;
+using System.Linq;
 
 namespace commonlib.Templates
 {
@@ -16,14 +16,12 @@ namespace commonlib.Templates
         {
             taskBuilder = builder;
             _bits = new TaskBits();
+            _cancellationToken = new CancellationTokenSource();
         }
 
-        private CancellationTokenSource _cancellationToken;
-        private readonly TaskBuilder taskBuilder;
-
+        protected internal readonly CancellationTokenSource _cancellationToken;
+        protected internal readonly TaskBuilder taskBuilder;
         protected internal readonly TaskBits _bits;
-
-        protected internal readonly KeyValuePair<TaskBits, Action> _taskBits;
 
         public CancellationTokenSource CancellationToken => _cancellationToken;
         public TaskBits GetBits => _bits;
@@ -31,20 +29,15 @@ namespace commonlib.Templates
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public async Task<HANDLE> StartAsync()
         {
-            _cancellationToken = new CancellationTokenSource();
-
             if (!_cancellationToken.IsCancellationRequested || _bits.IsBitSet(CustomTaskStatus.TS_HASDELETE))
             {
                 _ = Task.Run(async () =>
                 {
                     Func<Task> func = taskBuilder.GetTerminationCondition();
-                    if (func != null)
-                        await func();
-                    _cancellationToken.Cancel();
+                    if (func != null) await func().ContinueWith(_ => _cancellationToken.Cancel());
                 });
 
-                foreach (Action func in taskBuilder.GetStartFuncs())
-                    func();
+                await Task.WhenAll(taskBuilder.GetStartFuncs().Select(async action => await Task.Run(action)).ToArray());
             }
 
             _bits.SetBit(CustomTaskStatus.TS_RUNING);
@@ -57,20 +50,7 @@ namespace commonlib.Templates
             if (!_cancellationToken.IsCancellationRequested || _bits.IsBitSet(CustomTaskStatus.TS_HASDELETE))
             {
                 _bits.SetBit(CustomTaskStatus.TS_BUSY);
-                foreach (KeyValuePair<TaskExecutionMethod, Action> func in taskBuilder.GetExecuteFuncs())
-                {
-
-                    if (func.Key.Bits.IsBitSet(CustomTaskStatus.TS_BUSY))
-                        continue;
-
-                    _ = Task.Run(async () =>
-                    {
-                        func.Key.Bits.SetBit(CustomTaskStatus.TS_BUSY);
-                        func.Value();
-                        await Task.Delay(TimeSpan.FromSeconds(func.Key.Delay));
-                    });
-                    func.Key.Bits.ClearBit(CustomTaskStatus.TS_BUSY);
-                }
+                await Task.WhenAll(taskBuilder.GetExecuteFuncs().Select(async action => await Task.Run(action)).ToArray());
                 _bits.ClearBit(CustomTaskStatus.TS_BUSY);
             }
 
@@ -81,8 +61,7 @@ namespace commonlib.Templates
         public async Task<HANDLE> StopAsync()
         {
             if (!_cancellationToken.IsCancellationRequested || _bits.IsBitSet(CustomTaskStatus.TS_HASDELETE))
-                foreach (Action func in taskBuilder.GetEndFuncs())
-                    func();
+                await Task.WhenAll(taskBuilder.GetEndFuncs().Select(async action => await Task.Run(action)).ToArray());
 
             _bits.ClearBit(CustomTaskStatus.TS_RUNING);
             return await Task.FromResult(new HANDLE(Result.S_OK));

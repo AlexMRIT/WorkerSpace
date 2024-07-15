@@ -1,11 +1,11 @@
 ﻿using System;
+using commonlib.Enums;
 using System.Threading;
 using commonlib.WinUtils;
-using System.Threading.Tasks;
 using commonlib.Interfaces;
+using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Collections.Concurrent;
-using commonlib.Enums;
 
 namespace commonlib.Thread
 {
@@ -59,21 +59,23 @@ namespace commonlib.Thread
                             if (task.Value.GetBits.IsBitSet(CustomTaskStatus.TS_HASDELETE))
                                 continue;
 
-                            _ = Task.Run(async () =>
-                            {
-                                HANDLE result = await task.Value.ExecuteAsync();
-                                if (WinAPIAssert.Fail(result, out string message))
-                                {
-                                    await task.Value.StopAsync();
-                                    CurrentCancelationToken.Token.ThrowIfCancellationRequested();
-                                    Console.WriteLine(message);
-                                }
-                            });
-
                             if (task.Value.IsTaskCanceled())
                             {
                                 task.Value.GetBits.SetBit(CustomTaskStatus.TS_HASDELETE);
                                 tasksToRemove.Add(task.Key);
+                            }
+                            else
+                            {
+                                _ = Task.Run(async () =>
+                                {
+                                    HANDLE result = await task.Value.ExecuteAsync();
+                                    if (WinAPIAssert.Fail(result, out string message))
+                                    {
+                                        await task.Value.StopAsync();
+                                        CurrentCancelationToken.Token.ThrowIfCancellationRequested();
+                                        Console.WriteLine(message);
+                                    }
+                                }, CurrentCancelationToken.Token);
                             }
                         }
 

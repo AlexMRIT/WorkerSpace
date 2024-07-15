@@ -51,7 +51,6 @@
     <Compile Include="Interfaces\ITask.cs" />
     <Compile Include="Models\StorageId.cs" />
     <Compile Include="Models\TaskBuilder.cs" />
-    <Compile Include="Models\TaskExecutionMethod.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Templates\TemplateTask.cs" />
     <Compile Include="Thread\ThreadWorker.cs" />
