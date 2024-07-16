@@ -1,4 +1,5 @@
-﻿using commonlib;
+﻿using Client;
+using commonlib;
 using commonlib.Interfaces;
 using commonlib.Models;
 using plib;
@@ -22,7 +23,7 @@ namespace Server
 
         public async Task Execute()
         {
-            Console.WriteLine($"Бафу осталось времени: {Time}");
+            Console.WriteLine($"Бафу сила осталось времени: {Time}");
             await Task.Delay(1000);
             Time--;
         }
@@ -39,21 +40,22 @@ namespace Server
         private static void Main()
         {
             CLIBTask.CreateWorker("Main Worker");
+            //
+            //ExampleImplTask example = new ExampleImplTask();
+            //TaskBuilder taskBuilder = new TaskBuilder();
+            //taskBuilder.AppendStartDelegateFunc(example.Start);
+            //taskBuilder.AppendExecuteDelegateFunc(example.Execute);
+            //taskBuilder.AppendEndFuncs(example.End);
+            //
+            //taskBuilder.AppendTerminationCondition(async () =>
+            //{
+            //    int time = example.Time;
+            //    await Task.Delay(TimeSpan.FromSeconds(time));
+            //});
+            //ITask task = CLIBTask.NewTask(taskBuilder);
+            Game game = new Game();
+            game.Start();
 
-            ExampleImplTask example = new ExampleImplTask();
-            TaskBuilder taskBuilder = new TaskBuilder();
-            taskBuilder.AppendStartDelegateFunc(example.Start);
-            taskBuilder.AppendExecuteDelegateFunc(example.Execute);
-            taskBuilder.AppendEndFuncs(example.End);
-
-            taskBuilder.AppendTerminationCondition(async () =>
-            {
-                int time = example.Time;
-                await Task.Delay(TimeSpan.FromSeconds(time));
-            });
-            
-            ITask task = CLIBTask.NewTask(taskBuilder);
-           
             Process.GetCurrentProcess().WaitForExit();
         }
     }
